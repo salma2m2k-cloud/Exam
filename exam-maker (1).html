@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AZIR · Exam Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Kaushan+Script&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f9fa; --bg2:#e2eff2; --card:#ffffff; --card2:#eff7f8; --ink:#0d2a35; --muted:#4b6872; --line:#cde0e5;
+  --silver:#7d929c; --silver2:#a9bbc3; --teal:#0f7a8a; --aqua:#12a594; --blue:#2467c9; --violet:#6a57d6; --gold:#b58d35;
+  --ok:#12935f; --ok-soft:#dcf5ea; --bad:#c8202a; --bad-soft:#fde4e5; --warn:#9a5f00; --warn-soft:#fff0d0;
+  --sel:#0f7a8a; --sel-soft:#def2f3; --on-sel:#ffffff; --on-pri:#ffffff;
+  --galaxy:linear-gradient(100deg,#12a594 0%,#2467c9 42%,#6a57d6 68%,#b58d35 100%);
+  --shadow:0 10px 30px rgba(15,60,75,.13); --splat:.85; --deco:.3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#061f27; --bg2:#04141a; --card:#0b3039; --card2:#0e3b47; --ink:#e8f6f7; --muted:#8db4bb; --line:#1b5766;
+    --silver:#c3d1d7; --silver2:#6f8c97; --teal:#2fd4c0; --aqua:#2fd4c0; --blue:#5aa2ff; --violet:#9a8cff; --gold:#e0bd6a;
+    --ok:#42dc9c; --ok-soft:#10392d; --bad:#ff6a6f; --bad-soft:#40181d; --warn:#f0c065; --warn-soft:#3a2d12;
+    --sel:#5cd7ff; --sel-soft:#0f3d4b; --on-sel:#04222a; --on-pri:#04222a;
+    --galaxy:linear-gradient(100deg,#2fd4c0 0%,#5aa2ff 42%,#9a8cff 68%,#e0bd6a 100%);
+    --shadow:0 12px 34px rgba(0,0,0,.45); --splat:.55; --deco:.16;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061f27; --bg2:#04141a; --card:#0b3039; --card2:#0e3b47; --ink:#e8f6f7; --muted:#8db4bb; --line:#1b5766;
+  --silver:#c3d1d7; --silver2:#6f8c97; --teal:#2fd4c0; --aqua:#2fd4c0; --blue:#5aa2ff; --violet:#9a8cff; --gold:#e0bd6a;
+  --ok:#42dc9c; --ok-soft:#10392d; --bad:#ff6a6f; --bad-soft:#40181d; --warn:#f0c065; --warn-soft:#3a2d12;
+  --sel:#5cd7ff; --sel-soft:#0f3d4b; --on-sel:#04222a; --on-pri:#04222a;
+  --galaxy:linear-gradient(100deg,#2fd4c0 0%,#5aa2ff 42%,#9a8cff 68%,#e0bd6a 100%);
+  --shadow:0 12px 34px rgba(0,0,0,.45); --splat:.55; --deco:.16;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%) fixed;color:var(--ink);font-family:'Cairo','Segoe UI',Tahoma,system-ui,sans-serif;font-size:17px;line-height:1.7;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--sel);outline-offset:3px}
+[hidden]{display:none!important}
+h1,h2,h3,p{margin:0}
+sub{font-size:.68em;line-height:0;position:relative;bottom:-.25em}
+.f{direction:ltr;unicode-bidi:isolate;display:inline-block;font-weight:700;white-space:nowrap}
+.blank{display:inline-block;min-width:3.4em;border-bottom:3px dashed var(--sel);margin:0 .3em;transform:translateY(-.1em)}
+
+/* ---------- backdrop ---------- */
+.deco{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.deco i{position:absolute;background:linear-gradient(135deg,var(--teal),var(--blue));opacity:var(--deco)}
+.deco .a{top:0;inset-inline-end:0;width:min(38vw,430px);height:min(36vh,300px);clip-path:polygon(100% 0,38% 0,100% 100%)}
+.deco .b{top:0;inset-inline-end:0;width:min(22vw,250px);height:min(50vh,400px);clip-path:polygon(100% 0,100% 100%,20% 0);opacity:calc(var(--deco)*.6)}
+.deco .c{bottom:0;inset-inline-start:0;width:min(34vw,380px);height:min(30vh,260px);clip-path:polygon(0 100%,0 20%,100% 100%)}
+#splat{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:var(--splat)}
+#splat svg{width:100%;height:100%;display:block}
+
+/* ---------- type marks ---------- */
+.azir{font-family:'Rubik Wet Paint','Cairo',sans-serif;font-weight:400;line-height:1;letter-spacing:.02em;background:var(--galaxy);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px var(--silver2);filter:drop-shadow(0 3px 0 rgba(0,0,0,.22))}
+.azir.sm{font-size:1.9rem}
+.azir.big{font-size:clamp(4rem,12vw,7rem)}
+.wordmark{display:flex;align-items:center;gap:6px;direction:ltr;margin-bottom:8px}
+.orn{width:clamp(44px,9vw,86px);height:auto;flex:none}
+.orn.r{transform:scaleX(-1)}
+.tagline{text-align:center;margin-top:34px;font-family:'Kaushan Script','Cairo',cursive;font-size:clamp(1.5rem,4vw,2.2rem);color:var(--ink);direction:ltr}
+.tagline b{font-family:'Cairo',sans-serif;font-style:italic;font-weight:800;letter-spacing:.04em;background:linear-gradient(transparent 82%,var(--teal) 82% 92%,transparent 92%);padding:0 6px}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px clamp(14px,3vw,30px)}
+.brand{display:flex;align-items:center;gap:12px;background:none;border:0;padding:0;text-align:start}
+.brand .app{font-weight:800;font-size:1.05rem;color:var(--ink)}
+.tools{display:flex;gap:8px}
+.pill{border:2px solid var(--silver2);background:var(--card);color:var(--ink);border-radius:999px;min-height:44px;padding:0 16px;font-weight:700}
+.pill:hover{border-color:var(--sel)}
+main{max-width:1120px;margin:0 auto;padding:10px clamp(14px,3vw,24px) 70px}
+
+/* ---------- shared ---------- */
+.framed{position:relative;background:var(--card);border-radius:18px;padding:clamp(20px,3.4vw,34px);
+  box-shadow:var(--shadow),inset 0 0 0 2px var(--silver2),inset 0 0 0 8px var(--card),inset 0 0 0 10px var(--silver2)}
+.btn{border:2px solid var(--silver2);background:linear-gradient(180deg,var(--card2),var(--card));color:var(--ink);border-radius:12px;padding:8px 20px;font-weight:700;min-height:48px;transition:transform .12s,border-color .12s}
+.btn:hover{border-color:var(--sel);transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.pri{background:var(--galaxy);border-color:transparent;color:var(--on-pri)}
+.btn.small{min-height:42px;padding:4px 14px;font-size:.95rem}
+.btn.danger{color:var(--bad)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.inp{width:100%;background:var(--card2);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;line-height:1.6}
+.inp:focus{border-color:var(--sel);outline:none;box-shadow:0 0 0 3px var(--sel-soft)}
+textarea.inp{resize:vertical;min-height:90px}
+.fld{display:block;margin:0 0 14px}
+.fld>span{display:block;font-weight:700;margin-bottom:4px;font-size:.95rem;color:var(--muted)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 2px;border-top:1px dashed var(--line);min-height:50px;cursor:pointer}
+.switch input{width:22px;height:22px;accent-color:var(--teal);flex:none}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}
+.chip{background:var(--sel-soft);border:2px solid var(--silver2);border-radius:999px;padding:0 14px;font-weight:700;font-size:.95rem}
+.note{color:var(--muted);font-size:.92rem}
+.msg{margin-top:14px;font-weight:600}
+.msg p{margin:2px 0}
+.msg .ok{color:var(--ok)}.msg .warn{color:var(--warn)}.msg .bad{color:var(--bad)}
+
+/* ---------- home ---------- */
+.hero{display:grid;gap:26px;padding-top:6px}
+@media (min-width:900px){.hero{grid-template-columns:minmax(0,1fr) 310px;align-items:start}}
+.hero h1{font-size:clamp(1.9rem,4.6vw,3rem);line-height:1.25;font-weight:800;margin:6px 0 12px;max-width:16em}
+.lead{font-size:clamp(1.05rem,2.4vw,1.25rem);color:var(--muted);max-width:34em}
+.how{display:grid;gap:12px;margin-top:28px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.how div{border-inline-start:3px solid var(--silver2);padding:2px 14px}
+.how b{display:flex;align-items:center;gap:10px;font-size:1.05rem}
+.how b i{font-style:normal;width:30px;height:30px;border-radius:50%;border:2px solid var(--silver2);display:grid;place-items:center;font-size:.9rem;color:var(--teal)}
+.how span{display:block;color:var(--muted);font-size:.95rem;line-height:1.55;margin-top:4px}
+.hero-banner{display:none}
+@media (min-width:900px){.hero-banner{display:block;position:sticky;top:20px}}
+.banner{width:100%;height:auto;display:block;filter:drop-shadow(0 18px 24px rgba(0,0,0,.35));animation:drop .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes drop{from{transform:translateY(-36px);opacity:0}to{transform:none;opacity:1}}
+.lib{margin-top:30px}
+.lib h2{font-size:1.35rem;margin-bottom:12px}
+.li{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;padding:12px 0;border-top:1px dashed var(--line)}
+.li:first-of-type{border-top:0}
+.li-main{min-width:0;flex:1 1 220px}
+.li-main b{display:block;font-size:1.1rem;overflow-wrap:anywhere}
+.li-main small{color:var(--muted)}
+.li-acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- make ---------- */
+.stepper{display:flex;gap:8px;margin:6px 0 20px;flex-wrap:wrap}
+.stepper button{flex:1 1 150px;border:2px solid var(--line);background:var(--card);border-radius:14px;padding:6px 14px;font-weight:700;min-height:48px;color:var(--muted)}
+.stepper button[aria-current="step"]{border-color:var(--sel);color:var(--ink);background:var(--sel-soft)}
+.stepper button.done{border-color:var(--silver2);color:var(--ink)}
+.panel h2{font-size:1.4rem;margin-bottom:6px}
+.prompt{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;line-height:1.55;direction:ltr;text-align:left;min-height:280px;white-space:pre}
+.qe{border:2px solid var(--line);border-radius:14px;margin:0 0 10px;background:var(--card2)}
+.qe[open]{border-color:var(--silver2)}
+.qe summary{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;list-style:none;min-height:50px}
+.qe summary::-webkit-details-marker{display:none}
+.qe-n{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--card);border:2px solid var(--silver2);font-weight:800;font-size:.9rem}
+.qe-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.qe-st{flex:none;font-weight:800}
+.qe-st.ok{color:var(--ok)}.qe-st.bad{color:var(--bad)}
+.qe-body{padding:6px 14px 16px}
+.qe-body label.lb{display:block;font-weight:700;font-size:.9rem;color:var(--muted);margin:12px 0 4px}
+.oe{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.oe input[type=radio]{width:22px;height:22px;accent-color:var(--ok);flex:none}
+.oe .x{flex:none;width:40px;height:40px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--bad);font-weight:800}
+.prev{margin-top:12px;padding:10px 14px;border:2px dashed var(--line);border-radius:12px;font-weight:600}
+.qe-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.thumb{display:block;max-width:240px;max-height:180px;border-radius:10px;border:2px solid var(--line);margin:6px 0}
+.edbar{position:sticky;bottom:0;z-index:12;display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));background:var(--card);border:2px solid var(--silver2);border-radius:16px;box-shadow:var(--shadow)}
+.edbar .btn{flex:1 1 130px}
+.row2{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:640px){.row2{grid-template-columns:2fr 1fr}}
+
+/* ---------- intro ---------- */
+.intro{max-width:560px;margin:18px auto 0;text-align:center}
+.intro h2{font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.3;margin:6px 0 6px;overflow-wrap:anywhere}
+.intro .chips{justify-content:center}
+.intro .fld,.intro .switch{text-align:start}
+.intro .cta{justify-content:center}
+
+/* ---------- take ---------- */
+.qbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--card);border:2px solid var(--silver2);border-radius:16px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.qbar-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 14px}
+.qcount{font-weight:800;white-space:nowrap}
+.qcount b{font-size:1.5rem;color:var(--teal)}
+.qtitle{flex:1 1 120px;min-width:0;color:var(--muted);font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qtools{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+.timer{font-variant-numeric:tabular-nums;font-weight:800;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:2px 12px;direction:ltr}
+.timer.low{background:var(--bad-soft);color:var(--bad)}
+.track{height:7px;background:var(--line)}
+.track i{display:block;height:100%;width:0;background:var(--galaxy);transition:width .25s}
+.quiz-wrap{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:980px){.quiz-wrap{grid-template-columns:minmax(0,1fr) 310px;align-items:start}.nav-toggle,.nav-close{display:none!important}}
+.qhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.qno{font-weight:800;font-size:1.1rem;color:var(--muted)}
+.flag{border:2px dashed var(--silver2);background:transparent;border-radius:12px;padding:2px 14px;font-weight:700;min-height:42px;color:var(--muted)}
+.flag[aria-pressed="true"]{border:2px solid var(--gold);background:var(--warn-soft);color:var(--warn)}
+.qtext{font-size:clamp(1.3rem,3vw,1.85rem);font-weight:700;line-height:1.75;margin-bottom:16px;overflow-wrap:anywhere}
+.qimg{display:block;max-width:100%;max-height:340px;margin:0 auto 18px;border-radius:12px;border:2px solid var(--line);background:#fff}
+.opts{display:grid;gap:12px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:start;padding:14px 16px;min-height:64px;border:2px solid var(--line);background:var(--card2);border-radius:16px;font-size:clamp(1.1rem,2.6vw,1.35rem);font-weight:600;transition:border-color .12s,background .12s,box-shadow .12s}
+.opt:hover{border-color:var(--silver2)}
+.opt .let{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--silver2);color:var(--muted);font-weight:800}
+.opt .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.opt[aria-checked="true"]{border-color:var(--sel);background:var(--sel-soft);box-shadow:0 0 0 3px var(--sel-soft),0 0 18px rgba(47,212,192,.28)}
+.opt[aria-checked="true"] .let{background:var(--sel);border-color:var(--sel);color:var(--on-sel)}
+.qfoot{position:sticky;bottom:0;z-index:12;display:flex;gap:10px;margin-top:16px;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg2) 40%)}
+.qfoot .btn{flex:1}
+.qfoot .btn.next{flex:1.4}
+.navpanel{background:var(--card);border-radius:18px;box-shadow:var(--shadow),inset 0 0 0 2px var(--silver2);padding:16px}
+@media (min-width:980px){.navpanel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px)}}
+.navpanel h3{font-size:1.1rem;margin-bottom:4px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin-bottom:10px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-1px;margin-inline-end:4px}
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:8px}
+.n{position:relative;height:44px;border:2px solid var(--line);background:var(--card2);border-radius:12px;font-weight:700}
+.n.done{background:var(--sel-soft);border-color:var(--sel);color:var(--sel)}
+.n.cur{outline:3px solid var(--silver);outline-offset:1px}
+.n.flag::after{content:'';position:absolute;top:-5px;inset-inline-start:-5px;width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid var(--card)}
+.navpanel .btn.sub{width:100%;margin-top:14px}
+.nav-close{width:100%;margin-top:10px}
+.navback{display:none}
+@media (max-width:979px){
+  .navpanel{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:78vh;overflow:auto;border-radius:22px 22px 0 0;transform:translateY(110%);transition:transform .22s;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .navpanel.open{transform:translateY(0)}
+  .navback.show{display:block;position:fixed;inset:0;background:rgba(2,12,16,.6);z-index:39}
+}
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(2,12,16,.65);display:grid;place-items:center;padding:20px}
+.modal .box{background:var(--card);border-radius:18px;max-width:480px;width:100%;padding:24px;box-shadow:var(--shadow),inset 0 0 0 2px var(--silver2)}
+.modal h3{font-size:1.3rem;margin-bottom:8px}
+.modal p{margin-bottom:16px}
+.modal .row{display:flex;gap:10px;flex-wrap:wrap}
+.modal .row .btn{flex:1 1 130px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 20px;border-radius:999px;font-weight:700;z-index:70;max-width:90vw;text-align:center}
+
+/* ---------- result ---------- */
+.res-top{display:grid;gap:22px;justify-items:center;text-align:center}
+@media (min-width:760px){.res-top{grid-template-columns:auto 1fr;text-align:start;justify-items:stretch}}
+.ring{position:relative;width:190px;height:190px;margin:auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{stroke:var(--line)}
+.ring .fg{transition:stroke-dashoffset 1s ease-out;stroke-linecap:round}
+.ring .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;line-height:1.1}
+.ring .mid b{font-size:2.6rem;font-weight:800;direction:ltr}
+.ring .mid span{color:var(--muted);font-weight:700}
+.who{color:var(--muted);font-weight:600;overflow-wrap:anywhere}
+.verdict{font-size:clamp(1.7rem,5vw,2.5rem);font-weight:800;line-height:1.3;margin:2px 0}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+@media (max-width:759px){.stats{justify-content:center}}
+.stat{border:2px solid var(--line);border-radius:14px;padding:4px 16px;min-width:96px;text-align:center;background:var(--card2)}
+.stat b{display:block;font-size:1.45rem;line-height:1.3}
+.stat small{color:var(--muted);font-weight:700}
+.stat.ok{border-color:var(--ok)}.stat.ok b{color:var(--ok)}
+.stat.bad{border-color:var(--bad)}.stat.bad b{color:var(--bad)}
+.stat.skip{border-color:var(--gold)}.stat.skip b{color:var(--warn)}
+.res-actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 22px}
+.res-actions .btn{flex:1 1 220px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;position:sticky;top:env(safe-area-inset-top,0px);z-index:10;padding:8px 0;background:var(--bg)}
+.filters button{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:0 16px;font-weight:700;min-height:44px}
+.filters button[aria-pressed="true"]{border-color:var(--sel);background:var(--sel-soft)}
+.rv{margin-bottom:16px;padding:clamp(14px,3vw,24px);border-radius:18px;background:var(--card);box-shadow:var(--shadow);border-inline-start:8px solid var(--line)}
+.rv.ok{border-inline-start-color:var(--ok)}.rv.bad{border-inline-start-color:var(--bad)}.rv.skip{border-inline-start-color:var(--gold)}
+.rv-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.cl{border-radius:999px;padding:0 14px;font-weight:800;font-size:.95rem}
+.cl.ok{background:var(--ok-soft);color:var(--ok)}.cl.bad{background:var(--bad-soft);color:var(--bad)}.cl.skip{background:var(--warn-soft);color:var(--warn)}
+.rv-q{font-size:clamp(1.15rem,2.6vw,1.45rem);font-weight:700;line-height:1.8;margin-bottom:12px;overflow-wrap:anywhere}
+.rv-opts{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+.rv-opts li{display:flex;gap:12px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:8px 12px;font-weight:600;font-size:1.08rem;background:var(--card2)}
+.rv-opts .let{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--silver2);color:var(--muted);font-weight:800;font-size:.95rem}
+.rv-opts .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.rv-opts .tag{font-size:.78rem;font-weight:800;border-radius:8px;padding:0 8px;white-space:nowrap}
+.rv-opts li.ok{border-color:var(--ok);background:var(--ok-soft)}
+.rv-opts li.ok .let{background:var(--ok);border-color:var(--ok);color:var(--bg2)}
+.rv-opts li.ok .tag{background:var(--ok);color:var(--bg2)}
+.rv-opts li.no{border-color:var(--bad);background:var(--bad-soft)}
+.rv-opts li.no .let{background:var(--bad);border-color:var(--bad);color:var(--bg2)}
+.rv-opts li.no .tag{background:var(--bad);color:var(--bg2)}
+.rv-opts li.no .tx{text-decoration:line-through;text-decoration-thickness:2px}
+details.sol{border:2px solid var(--sel);border-radius:14px;background:var(--sel-soft)}
+details.sol summary{cursor:pointer;font-weight:800;padding:8px 16px;color:var(--sel);list-style:none;display:flex;align-items:center;gap:8px;min-height:46px}
+details.sol summary::-webkit-details-marker{display:none}
+details.sol summary::before{content:'✎'}
+.steps{padding:2px 16px 14px}
+.steps p{margin:6px 0;font-size:1.05rem;display:flex;gap:10px}
+.steps p::before{content:'›';color:var(--sel);font-weight:800}
+.empty{text-align:center;padding:30px;color:var(--muted);font-weight:700}
+.foot{text-align:center;color:var(--muted);font-size:.9rem;margin-top:22px}
+.foot a{color:var(--sel);font-weight:700}
+body.student .t-only{display:none!important}
+body:not(.student) .s-only{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="deco" aria-hidden="true"><i class="a"></i><i class="b"></i><i class="c"></i></div>
+<div id="splat" aria-hidden="true"></div>
+
+<header class="top">
+  <button class="brand" id="brandBtn" type="button">
+    <span class="azir sm">AZIR</span><span class="app" data-i="appName"></span>
+  </button>
+  <div class="tools">
+    <button class="pill" id="langBtn" type="button"></button>
+    <button class="pill" id="themeBtn" type="button" aria-label="Theme">◐</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ===================== HOME ===================== -->
+<section id="home" class="screen">
+  <div class="hero">
+    <div>
+      <div class="wordmark" aria-label="AZIR">
+        <svg class="orn" viewBox="0 0 90 70" aria-hidden="true"><use href="#ornShape"/></svg>
+        <span class="azir big">AZIR</span>
+        <svg class="orn r" viewBox="0 0 90 70" aria-hidden="true"><use href="#ornShape"/></svg>
+      </div>
+      <div class="cta">
+        <button class="btn pri" id="btnCreate" type="button" data-i="create"></button>
+      </div>
+    </div>
+    <div class="hero-banner" id="bannerWrap" aria-hidden="true"></div>
+  </div>
+  <div class="framed lib">
+    <h2 data-i="yourExams"></h2>
+    <div id="libList"></div>
+  </div>
+  <p class="tagline">Be The Best One or <b>NONE</b></p>
+</section>
+
+<!-- ===================== MAKE ===================== -->
+<section id="make" class="screen" hidden>
+  <div class="stepper" id="stepper">
+    <button type="button" data-s="1" data-i="step1"></button>
+    <button type="button" data-s="2" data-i="step2"></button>
+    <button type="button" data-s="3" data-i="step3"></button>
+  </div>
+
+  <div class="framed panel" id="p1">
+    <h2 data-i="s1Title"></h2>
+    <p class="note" data-i="s1Text"></p>
+    <label class="fld" style="margin-top:14px"><textarea class="inp prompt" id="promptBox" readonly rows="16"></textarea></label>
+    <div class="cta" style="margin-top:0">
+      <button class="btn pri" id="copyPrompt" type="button" data-i="copyInstr"></button>
+      <button class="btn" id="to2" type="button" data-i="next"></button>
+    </div>
+  </div>
+
+  <div class="framed panel" id="p2" hidden>
+    <h2 data-i="s2Title"></h2>
+    <p class="note" data-i="s2Text"></p>
+    <label class="fld" style="margin-top:14px"><textarea class="inp" id="pasteBox" rows="14" dir="auto" data-ph="pastePh"></textarea></label>
+    <div class="cta" style="margin-top:0">
+      <button class="btn pri" id="buildBtn" type="button" data-i="build"></button>
+      <button class="btn" id="sampleBtn" type="button" data-i="sample"></button>
+      <button class="btn" id="importBtn" type="button" data-i="importFile"></button>
+      <button class="btn" id="back1" type="button" data-i="back"></button>
+    </div>
+    <div class="msg" id="mkMsg"></div>
+  </div>
+
+  <div class="panel" id="p3" hidden>
+    <div class="framed">
+      <h2 data-i="s3Title"></h2>
+      <div class="row2" style="margin-top:12px">
+        <label class="fld"><span data-i="examTitle"></span><input class="inp" id="edTitle" dir="auto" maxlength="160"></label>
+        <label class="fld"><span data-i="timeLimit"></span><input class="inp" id="edMin" type="number" min="0" max="600" inputmode="numeric"></label>
+      </div>
+      <p class="note" id="edSummary"></p>
+    </div>
+    <div id="editor" style="margin-top:16px"></div>
+    <div class="edbar">
+      <button class="btn small" id="edAdd" type="button" data-i="addQ"></button>
+      <button class="btn small" id="edSave" type="button" data-i="save"></button>
+      <button class="btn small" id="edDl" type="button" data-i="dlFile"></button>
+      <button class="btn small pri" id="edStart" type="button" data-i="startExam"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INTRO ===================== -->
+<section id="intro" class="screen" hidden>
+  <div class="framed intro">
+    <span class="azir sm">AZIR</span>
+    <h2 id="inTitle" dir="auto"></h2>
+    <div class="chips" id="inChips"></div>
+    <label class="fld"><span data-i="yourName"></span><input class="inp" id="inName" maxlength="60" dir="auto"></label>
+    <label class="switch"><span data-i="shuffleQ"></span><input type="checkbox" id="inSq"></label>
+    <label class="switch"><span data-i="shuffleO"></span><input type="checkbox" id="inSo"></label>
+    <div class="cta">
+      <button class="btn t-only" id="inBack" type="button" data-i="back"></button>
+      <button class="btn pri" id="inStart" type="button" data-i="startNow"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TAKE ===================== -->
+<section id="take" class="screen" hidden>
+  <div class="qbar">
+    <div class="qbar-row">
+      <div class="qcount"><b id="qnum">1</b> / <span id="qtot">1</span></div>
+      <div class="qtitle" id="qtitle" dir="auto"></div>
+      <div class="qtools">
+        <span class="timer" id="timer">00:00</span>
+        <button class="btn small nav-toggle" id="navBtn" type="button" data-i="questionsBtn"></button>
+        <button class="btn small pri" id="submitTop" type="button" data-i="submit"></button>
+      </div>
+    </div>
+    <div class="track"><i id="trackFill"></i></div>
+  </div>
+  <div class="quiz-wrap">
+    <div>
+      <article class="framed">
+        <div class="qhead">
+          <span class="qno" id="qno"></span>
+          <button class="flag" id="flagBtn" type="button" aria-pressed="false"></button>
+        </div>
+        <div class="qtext" id="qtext" dir="auto"></div>
+        <div id="qimgBox"></div>
+        <div class="opts" id="opts" role="radiogroup"></div>
+      </article>
+      <div class="qfoot">
+        <button class="btn" id="prevBtn" type="button" data-i="prev"></button>
+        <button class="btn pri next" id="nextBtn" type="button"></button>
+      </div>
+    </div>
+    <aside class="navpanel" id="navPanel">
+      <h3 data-i="map"></h3>
+      <div class="legend" id="legend"></div>
+      <div class="ngrid" id="ngrid"></div>
+      <button class="btn pri sub" id="submitSide" type="button" data-i="submit"></button>
+      <button class="btn nav-close" id="navClose" type="button" data-i="close"></button>
+    </aside>
+  </div>
+  <div class="navback" id="navBack"></div>
+</section>
+
+<!-- ===================== RESULT ===================== -->
+<section id="result" class="screen" hidden>
+  <div class="framed res-top">
+    <div class="ring" id="ring"></div>
+    <div>
+      <div class="who" id="resWho" dir="auto"></div>
+      <h2 class="verdict" id="verdict"></h2>
+      <p class="note" id="subv"></p>
+      <div class="stats" id="stats"></div>
+    </div>
+  </div>
+  <div class="res-actions">
+    <button class="btn pri" id="retryWrong" type="button"></button>
+    <button class="btn" id="again" type="button" data-i="again"></button>
+    <button class="btn t-only" id="resHome" type="button" data-i="home"></button>
+  </div>
+  <div class="filters" id="filters" role="group"></div>
+  <div id="review"></div>
+</section>
+
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <h3 id="mTitle"></h3>
+    <p id="mMsg"></p>
+    <div id="mExtra"></div>
+    <div class="row" id="mBtns"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<input type="file" id="fileIn" accept=".json,.csv,.tsv,.txt,text/plain,application/json,text/csv" hidden>
+<input type="file" id="imgIn" accept="image/*" hidden>
+
+<!-- shared SVG symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="oG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd4c0"/><stop offset=".5" stop-color="#2b73c9"/><stop offset="1" stop-color="#6b4fd0"/></linearGradient>
+    <linearGradient id="oS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1f6f8"/><stop offset=".5" stop-color="#9fb2bb"/><stop offset="1" stop-color="#e7eef1"/></linearGradient>
+    <g id="ornShape">
+      <path d="M88 34 C60 34 28 26 6 4 C30 8 52 14 70 26 Z" fill="url(#oG)" stroke="url(#oS)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M88 40 C62 46 34 44 12 30 C36 30 56 32 74 38 Z" fill="url(#oG)" stroke="url(#oS)" stroke-width="2.2" stroke-linejoin="round" opacity=".92"/>
+      <path d="M88 46 C68 58 44 62 22 56 C42 50 60 48 76 46 Z" fill="url(#oG)" stroke="url(#oS)" stroke-width="2.2" stroke-linejoin="round" opacity=".85"/>
+    </g>
+  </defs>
+</svg>
+
+<script>
+(function(){
+'use strict';
+/* pristine copy of this page, used to build the standalone student file */
+var SRC='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+
+/* =============================================================
+   helpers
+============================================================= */
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return [].slice.call((r||document).querySelectorAll(s))}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmt(s){
+  s=esc(s==null?'':s);
+  s=s.replace(/\{\{([\s\S]+?)\}\}/g,function(m,x){
+    x=x.replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>').replace(/\((s|g|aq|l|v)\)/g,'<sub>($1)</sub>');
+    return '<span class="f">'+x+'</span>';
+  });
+  return s.replace(/_{3,}/g,'<span class="blank"></span>').replace(/\n/g,'<br>');
+}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function mmss(s){s=Math.max(0,s|0);var m=Math.floor(s/60),r=s%60;return (m<10?'0':'')+m+':'+(r<10?'0':'')+r}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+var toastT=null;
+function toast(msg){var el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){el.hidden=true},2200)}
+
+/* =============================================================
+   translations (interface only, never the questions)
+============================================================= */
+var T={
+en:{
+ appName:'Exam Maker',
+ homeTitle:'Turn any worksheet into a graded exam',
+ homeLead:'Let Claude read your PDF, paste its reply here, and your students get an exam with instant grading and step-by-step solutions.',
+ create:'Create an exam', openFile:'Open an exam file',
+ how1t:'Ask Claude', how1:'Upload your PDF or photos to Claude and send it our ready-made instructions.',
+ how2t:'Paste the reply', how2:'Paste what Claude sends back. The page builds the exam and lets you fix anything.',
+ how3t:'Share it', how3:'Send students a link or a file. They answer, submit, and see the solution to every mistake.',
+ yourExams:'Your exams', emptyLib:'No saved exams yet. Exams you save are kept in this browser.',
+ nQ:'{n} questions', min:'{n} min', noLimit:'No time limit',
+ start:'Start', edit:'Edit', copyLink:'Student link', download:'Download', del:'Delete',
+ confirmDel:'Delete “{t}”?', cancel:'Cancel',
+ step1:'1 · Ask Claude', step2:'2 · Paste the reply', step3:'3 · Review and edit',
+ s1Title:'Ask Claude to read your worksheet',
+ s1Text:'Open Claude, attach your PDF or photos, then paste the instructions below. Claude replies with your questions in a format this page understands. Works with Arabic and English worksheets.',
+ copyInstr:'Copy instructions', copied:'Copied ✓', next:'Next', back:'Back', close:'Close',
+ s2Title:'Paste Claude’s reply',
+ s2Text:'You can also paste rows copied from Google Sheets: question, four choices, answer letter, solution.',
+ pastePh:'Paste here…',
+ build:'Build the exam', sample:'Load a sample', importFile:'Import a file',
+ found:'{n} questions found.', warnQ:'Question {i}: {p}',
+ noText:'the question text is empty', fewOpts:'needs at least two choices', noAns:'no correct answer is marked',
+ nothingFound:'No questions found. Make sure you pasted Claude’s full reply.',
+ s3Title:'Review your exam', examTitle:'Exam title', timeLimit:'Time limit (minutes, 0 = none)',
+ qLabel:'Question', choices:'Choices (tick the correct one)', solutionLbl:'Solution (one step per line)',
+ addImg:'Add image', rmImg:'Remove image', delQ:'Delete question', addQ:'Add question', addChoice:'Add choice',
+ up:'Move up', down:'Move down', preview:'Preview',
+ needsFix:'{n} need attention', allGood:'All questions look good', untitled:'Untitled exam',
+ save:'Save', saved:'Saved in this browser ✓', shareLink:'Student link', dlFile:'Download exam to send', fileReady:'Exam file ready. Send it to your students.', startExam:'Start exam',
+ fixFirst:'Fix the highlighted questions first.',
+ linkTitle:'Student link', linkNote:'Anyone with this link can take the exam. Images are not included in links; use the file for exams with images.',
+ linkLong:'This link is very long. For big exams, send the file instead.', copyBtn:'Copy',
+ linkNA:'Links work once this page is hosted on a website.',
+ introQ:'Questions', yourName:'Your name (optional)', shuffleQ:'Shuffle the questions', shuffleO:'Shuffle the choices', startNow:'Start exam',
+ openMaker:'Teacher? Open the exam maker',
+ qOf:'Question {n}', flag:'🚩 Flag for review', flagged:'🚩 Flagged', prev:'Previous', nextQ:'Next', submit:'Submit exam',
+ map:'Question map', lAns:'Answered', lFlag:'Flagged', lNo:'Unanswered', questionsBtn:'Questions',
+ mNotDone:'Not finished yet', mNotDoneMsg:'You left {n} unanswered. Unanswered questions count as wrong. Submit anyway?',
+ keep:'Keep working', submitNow:'Submit now', timeUp:'Time is up', timeUpMsg:'Your exam was submitted automatically.', ok:'OK',
+ v90:'Outstanding 🏆', s90:'Excellent command of the material.',
+ v75:'Very good 👏', s75:'Strong work. A few slips are all that separate you from full marks.',
+ v50:'Good, keep going 💪', s50:'Read the solution to each mistake, then retry the missed questions.',
+ v0:'Needs more practice 📚', s0:'No problem. The solutions below explain every step. Review them and try again.',
+ correct:'Correct', wrong:'Wrong', skipped:'Skipped', time:'Time',
+ fAll:'All', fWrong:'Wrong', fSkip:'Skipped', fOk:'Correct',
+ retry:'Retry the missed ones ({n})', noMiss:'No mistakes 🎉', again:'New attempt', home:'Home',
+ cOk:'✓ Correct', cBad:'✗ Wrong', cSkip:'○ Skipped', yourAns:'Your answer', rightAns:'Correct answer', solution:'Solution',
+ emptyFilter:'Nothing here 👌', badFile:'This file could not be read.', storeFull:'Storage is full. Download the file instead.',
+ student:'Student', sampleTitle:'Sample exam'
+},
+ar:{
+ appName:'صانع الاختبارات',
+ homeTitle:'حوّل أي ورقة أسئلة إلى اختبار يُصحَّح تلقائيًا',
+ homeLead:'دع Claude يقرأ ملف الأسئلة، والصق رده هنا، ليحصل طلابك على اختبار يُصحَّح فورًا مع الحل خطوة بخطوة.',
+ create:'إنشاء اختبار', openFile:'فتح ملف اختبار',
+ how1t:'اطلب من Claude', how1:'ارفع ملف PDF أو صورًا إلى Claude وأرسل له التعليمات الجاهزة.',
+ how2t:'الصق الرد', how2:'الصق ما يرسله Claude. تبني الصفحة الاختبار وتتيح لك تعديل أي شيء.',
+ how3t:'شاركه', how3:'أرسل للطلاب رابطًا أو ملفًا. يجيبون ثم يسلّمون ويرون حل كل سؤال أخطأوا فيه.',
+ yourExams:'اختباراتك', emptyLib:'لا توجد اختبارات محفوظة بعد. تُحفظ الاختبارات في هذا المتصفح.',
+ nQ:'{n} سؤالًا', min:'{n} دقيقة', noLimit:'بدون حد زمني',
+ start:'ابدأ', edit:'تعديل', copyLink:'رابط الطلاب', download:'تنزيل', del:'حذف',
+ confirmDel:'هل تريد حذف «{t}»؟', cancel:'إلغاء',
+ step1:'1 · اطلب من Claude', step2:'2 · الصق الرد', step3:'3 · راجع وعدّل',
+ s1Title:'اطلب من Claude قراءة ورقة الأسئلة',
+ s1Text:'افتح Claude وأرفق ملف PDF أو الصور، ثم الصق التعليمات أدناه. سيرد Claude بالأسئلة بتنسيق تفهمه هذه الصفحة. يعمل مع الأوراق العربية والإنجليزية.',
+ copyInstr:'نسخ التعليمات', copied:'تم النسخ ✓', next:'التالي', back:'رجوع', close:'إغلاق',
+ s2Title:'الصق رد Claude',
+ s2Text:'يمكنك أيضًا لصق صفوف منسوخة من Google Sheets: السؤال، أربعة اختيارات، حرف الإجابة، الحل.',
+ pastePh:'الصق هنا…',
+ build:'ابنِ الاختبار', sample:'تحميل مثال', importFile:'استيراد ملف',
+ found:'تم العثور على {n} سؤالًا.', warnQ:'السؤال {i}: {p}',
+ noText:'نص السؤال فارغ', fewOpts:'يحتاج إلى اختيارين على الأقل', noAns:'لم تُحدَّد الإجابة الصحيحة',
+ nothingFound:'لم يُعثر على أي سؤال. تأكد من لصق رد Claude كاملًا.',
+ s3Title:'راجع اختبارك', examTitle:'عنوان الاختبار', timeLimit:'الوقت بالدقائق (0 = بدون وقت)',
+ qLabel:'السؤال', choices:'الاختيارات (حدّد الإجابة الصحيحة)', solutionLbl:'الحل (خطوة في كل سطر)',
+ addImg:'إضافة صورة', rmImg:'إزالة الصورة', delQ:'حذف السؤال', addQ:'إضافة سؤال', addChoice:'إضافة اختيار',
+ up:'نقل لأعلى', down:'نقل لأسفل', preview:'معاينة',
+ needsFix:'{n} تحتاج إلى مراجعة', allGood:'كل الأسئلة سليمة', untitled:'اختبار بلا عنوان',
+ save:'حفظ', saved:'تم الحفظ في هذا المتصفح ✓', shareLink:'رابط الطلاب', dlFile:'تنزيل الاختبار للإرسال', fileReady:'ملف الاختبار جاهز. أرسله إلى طلابك.', startExam:'ابدأ الاختبار',
+ fixFirst:'صحّح الأسئلة المميّزة أولًا.',
+ linkTitle:'رابط الطلاب', linkNote:'أي شخص لديه هذا الرابط يستطيع حل الاختبار. الصور غير مضمّنة في الروابط؛ استخدم الملف للاختبارات التي تحتوي على صور.',
+ linkLong:'هذا الرابط طويل جدًا. للاختبارات الكبيرة أرسل الملف بدلًا منه.', copyBtn:'نسخ',
+ linkNA:'تعمل الروابط بعد نشر هذه الصفحة على موقع إلكتروني.',
+ introQ:'عدد الأسئلة', yourName:'اسمك (اختياري)', shuffleQ:'ترتيب الأسئلة عشوائي', shuffleO:'خلط الاختيارات', startNow:'ابدأ الاختبار',
+ openMaker:'هل أنت المعلم؟ افتح صانع الاختبارات',
+ qOf:'السؤال {n}', flag:'🚩 علّم للمراجعة', flagged:'🚩 معلَّم', prev:'السابق', nextQ:'التالي', submit:'تسليم الاختبار',
+ map:'خريطة الأسئلة', lAns:'تمت الإجابة', lFlag:'للمراجعة', lNo:'بدون إجابة', questionsBtn:'الأسئلة',
+ mNotDone:'لم تنتهِ بعد', mNotDoneMsg:'تركت {n} بدون إجابة. الأسئلة بدون إجابة تُحسب خاطئة. هل تريد التسليم؟',
+ keep:'أكمل الحل', submitNow:'سلّم الآن', timeUp:'انتهى الوقت', timeUpMsg:'تم تسليم اختبارك تلقائيًا.', ok:'حسنًا',
+ v90:'ممتاز 🏆', s90:'إتقان رائع للمادة.',
+ v75:'جيد جدًا 👏', s75:'مستوى قوي. بعض الأخطاء البسيطة فقط تفصلك عن الدرجة النهائية.',
+ v50:'جيد، واصل التقدم 💪', s50:'اقرأ حل كل سؤال أخطأت فيه، ثم أعد حل الأسئلة التي فاتتك.',
+ v0:'تحتاج إلى مزيد من التدريب 📚', s0:'لا بأس. الحلول بالأسفل تشرح كل خطوة. راجعها ثم حاول من جديد.',
+ correct:'صحيحة', wrong:'خاطئة', skipped:'متروكة', time:'الوقت',
+ fAll:'الكل', fWrong:'الخاطئة', fSkip:'المتروكة', fOk:'الصحيحة',
+ retry:'أعد حل الأسئلة الخاطئة ({n})', noMiss:'لا توجد أخطاء 🎉', again:'محاولة جديدة', home:'الرئيسية',
+ cOk:'✓ صحيحة', cBad:'✗ خاطئة', cSkip:'○ بدون إجابة', yourAns:'إجابتك', rightAns:'الإجابة الصحيحة', solution:'الحل',
+ emptyFilter:'لا شيء هنا 👌', badFile:'تعذّرت قراءة هذا الملف.', storeFull:'مساحة التخزين ممتلئة. نزّل الملف بدلًا من ذلك.',
+ student:'الطالب', sampleTitle:'اختبار تجريبي'
+}};
+var LANG='en';
+function t(k,v){
+  var s=(T[LANG]&&T[LANG][k]!=null)?T[LANG][k]:(T.en[k]!=null?T.en[k]:k);
+  if(v){for(var x in v){s=s.split('{'+x+'}').join(v[x])}}
+  return s;
+}
+var LETS={en:['A','B','C','D','E','F'],ar:['أ','ب','ج','د','هـ','و']};
+function L(i){return LETS[LANG][i]||String(i+1)}
+
+/* =============================================================
+   the instruction sent to Claude (kept in English on purpose)
+============================================================= */
+var PROMPT=[
+'I want to turn the attached worksheet (PDF or photos) into an online exam.',
+'',
+'Read EVERY question and reply with the exam in EXACTLY the format below, inside ONE code block, with nothing else outside the block.',
+'',
+'FORMAT',
+'TITLE: short exam title',
+'MINUTES: time limit in minutes (0 for no limit)',
+'',
+'Q: question text',
+'A) choice',
+'B) choice',
+'C) choice',
+'D) choice',
+'ANSWER: letter of the correct choice',
+'SOLUTION: first step of the working',
+'second step',
+'final result',
+'---',
+'Q: next question ...',
+'',
+'RULES',
+'1. Keep each question in its original language. Do not translate.',
+'2. If a question already has choices, keep them. If it is a written (open) question, write 4 choices: the correct answer plus 3 realistic wrong answers based on common student mistakes.',
+'3. If the worksheet shows the answer (circled, ticked or handwritten), use it. Otherwise solve the question yourself and double-check every calculation.',
+'4. SOLUTION shows the working step by step, one step per line, in the language of the question.',
+'5. Wrap every chemical formula, equation, math expression and number with its unit in double curly braces, for example {{CaCO3}}, {{22.4 L}}, {{2H2 + O2 → 2H2O}}. Write subscripts as plain digits (H2O, not H₂O).',
+'6. If a question depends on a figure or graph, describe it in words inside the question, in square brackets.',
+'7. Put a line with only --- between questions. Skip page numbers, headers and ads.'
+].join('\n');
+
+var SAMPLE=[
+'TITLE: Sample exam',
+'MINUTES: 0',
+'',
+'Q: How many moles are there in {{36 g}} of water? {{(H=1 , O=16)}}',
+'A) {{1 mol}}',
+'B) {{2 mol}}',
+'C) {{18 mol}}',
+'D) {{0.5 mol}}',
+'ANSWER: B',
+'SOLUTION: Molar mass {{H2O = (2 × 1) + 16 = 18 g/mol}}',
+'Moles = mass ÷ molar mass',
+'{{36 / 18 = 2 mol}}',
+'---',
+'Q: ما الصيغة الأولية للجلوكوز {{C6H12O6}}؟',
+'A) {{CH2O}}',
+'B) {{C2H4O2}}',
+'C) {{C3H6O3}}',
+'D) {{C6H12O6}}',
+'ANSWER: A',
+'SOLUTION: نقسم أرقام الصيغة على القاسم المشترك الأكبر {{6}}',
+'{{C6H12O6 ÷ 6 = CH2O}}',
+'---',
+'Q: At STP, one mole of any gas occupies ___',
+'A) {{22.4 L}}',
+'B) {{24 L}}',
+'C) {{2.24 L}}',
+'D) {{1 L}}',
+'ANSWER: A',
+'SOLUTION: At STP ({{0 °C}} and {{1 atm}}) the molar volume is {{22.4 L}}.',
+'{{24 L}} is the molar volume at room conditions (RTP).'
+].join('\n');
+
+/* =============================================================
+   exam model, parsing and validation
+============================================================= */
+var IMG_RE=/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/;
+function normalize(o){
+  if(!o||typeof o!=='object') return null;
+  var qs=Array.isArray(o.qs)?o.qs:[];
+  var out={id:(typeof o.id==='string'&&o.id)?o.id:uid(),title:String(o.title||'').slice(0,160),
+    minutes:Math.max(0,Math.min(600,parseInt(o.minutes,10)||0)),qs:[]};
+  qs.forEach(function(q){
+    if(!q||typeof q!=='object') return;
+    var opts=Array.isArray(q.o)?q.o.slice(0,6).map(function(x){return String(x==null?'':x)}):[];
+    var a=parseInt(q.a,10); if(isNaN(a)) a=-1;
+    out.qs.push({t:String(q.t==null?'':q.t),o:opts,a:a,s:String(q.s==null?'':q.s),
+      img:(typeof q.img==='string'&&IMG_RE.test(q.img))?q.img:''});
+  });
+  return out;
+}
+function problem(q){
+  if(!q.t.trim()) return 'noText';
+  if(q.o.filter(function(x){return x.trim()}).length<2) return 'fewOpts';
+  if(q.a<0||q.a>=q.o.length||!q.o[q.a].trim()) return 'noAns';
+  return null;
+}
+function cleanExam(qz){
+  var out={id:qz.id,title:qz.title,minutes:qz.minutes,qs:[]};
+  qz.qs.forEach(function(q){
+    var o=[],a=-1;
+    q.o.forEach(function(x,j){ if(x.trim()){ if(j===q.a) a=o.length; o.push(x.trim()); } });
+    out.qs.push({t:q.t.trim(),o:o,a:a,s:q.s.trim(),img:q.img||''});
+  });
+  return out;
+}
+function letterIdx(c){
+  c=String(c).trim().charAt(0);
+  if(/[1-6]/.test(c)) return +c-1;
+  if(/[Aa]/.test(c)||/[أإآا]/.test(c)) return 0;
+  if(/[Bb]/.test(c)||c==='ب') return 1;
+  if(/[Cc]/.test(c)||c==='ج') return 2;
+  if(/[Dd]/.test(c)||c==='د') return 3;
+  if(/[Ee]/.test(c)||c==='ه') return 4;
+  if(/[Ff]/.test(c)||c==='و') return 5;
+  return -1;
+}
+function parseExam(raw){
+  var text=raw.replace(/\r/g,'').replace(/^\s*```.*$/gm,'').replace(/\*\*/g,'');
+  var out={title:'',minutes:0,qs:[]}, cur=null, mode=null;
+  function push(){
+    if(cur){
+      cur.t=cur.t.trim(); cur.s=cur.s.trim();
+      cur.o=cur.o.map(function(x){return x.trim()});
+      out.qs.push(cur);
+    }
+    cur=null; mode=null;
+  }
+  text.split('\n').forEach(function(ln){
+    var m;
+    if(!cur&&(m=ln.match(/^\s*TITLE\s*[:：]\s*(.*)$/i))){ out.title=m[1].trim(); return; }
+    if(!cur&&(m=ln.match(/^\s*MINUTES\s*[:：]\s*(\d+)/i))){ out.minutes=+m[1]; return; }
+    if(/^\s*(-{3,}|—{2,})\s*$/.test(ln)){ push(); return; }
+    if((m=ln.match(/^\s*(?:Q|Question|س|السؤال)\s*\d*\s*[:：.)\-]\s*(.*)$/i))){
+      push(); cur={t:m[1],o:[],a:-1,s:'',img:''}; mode='q'; return;
+    }
+    if(!cur) return;
+    if(mode==='sol'){
+      cur.s+='\n'+ln; return;
+    }
+    if((m=ln.match(/^\s*(?:ANSWER|ANS|CORRECT(?:\s+ANSWER)?|الإجابة(?:\s+الصحيحة)?)\s*[:：]\s*\(?\s*([A-Fa-fأبجدهوإآا1-6])/i))&&cur.a<0){
+      cur.a=letterIdx(m[1]); mode='ans'; return;
+    }
+    if((m=ln.match(/^\s*(?:SOLUTION|EXPLANATION|SOL|الحل|الشرح)\s*[:：]\s*(.*)$/i))){
+      cur.s=m[1]; mode='sol'; return;
+    }
+    if((mode==='q'||mode==='opt')&&(m=ln.match(/^\s*\(?([A-Fa-fأبجدهو])\s*[)\.\-–:]\s*(.+)$/))){
+      cur.o.push(m[2]); mode='opt'; return;
+    }
+    if(mode==='q'){ cur.t+='\n'+ln; }
+    else if(mode==='opt'&&ln.trim()){ cur.o[cur.o.length-1]+=' '+ln.trim(); }
+  });
+  push();
+  out.qs.forEach(function(q){ if(q.a>=q.o.length) q.a=-1; });
+  return out;
+}
+function parseCSV(text,delim){
+  var rows=[],row=[],cell='',inQ=false;
+  text=text.replace(/\r\n?/g,'\n');
+  for(var i=0;i<text.length;i++){
+    var c=text.charAt(i);
+    if(inQ){
+      if(c==='"'){ if(text.charAt(i+1)==='"'){cell+='"';i++} else inQ=false; }
+      else cell+=c;
+    } else if(c==='"'&&cell===''){ inQ=true; }
+    else if(c===delim){ row.push(cell); cell=''; }
+    else if(c==='\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+    else cell+=c;
+  }
+  row.push(cell); rows.push(row);
+  return rows.filter(function(r){return r.some(function(x){return x.trim()})});
+}
+function parseTable(raw){
+  var first=raw.split('\n')[0]||'';
+  var delim=first.indexOf('\t')>=0?'\t':(first.indexOf(';')>=0&&first.indexOf(',')<0?';':',');
+  var rows=parseCSV(raw,delim);
+  if(rows.length&&/^(question|q|السؤال)$/i.test((rows[0][0]||'').trim())) rows.shift();
+  var out={title:'',minutes:0,qs:[]};
+  rows.forEach(function(r){
+    var q={t:(r[0]||'').trim(),o:[],a:-1,s:(r[6]||'').trim(),img:''};
+    var map={},ai=letterIdx(r[5]||'');
+    for(var j=1;j<=4;j++){ var v=(r[j]||'').trim(); if(v){ map[j-1]=q.o.length; q.o.push(v); } }
+    if(ai>=0&&map[ai]!==undefined) q.a=map[ai];
+    if(q.t) out.qs.push(q);
+  });
+  return out;
+}
+function parseAny(raw){
+  raw=raw.replace(/^\uFEFF/,'');
+  var tr=raw.trim();
+  if(tr.charAt(0)==='{'){
+    try{ var j=JSON.parse(tr); var n=normalize(j); if(n&&n.qs.length) return {json:true,data:n}; }catch(e){}
+  }
+  if(/^\s*(Q|Question|س|السؤال)\s*\d*\s*[:：.)\-]/im.test(raw)) return {data:parseExam(raw)};
+  return {data:parseTable(raw)};
+}
+
+/* =============================================================
+   sharing: file, link
+============================================================= */
+function slug(s){var x=String(s||'').replace(/[^\w\- ]+/g,'').trim().replace(/\s+/g,'-');return x||'exam'}
+function examFile(qz){return JSON.stringify({azir:1,id:qz.id,title:qz.title,minutes:qz.minutes,qs:qz.qs})}
+/* standalone exam: this same page with the exam embedded; opens straight into the exam */
+function buildStudentHTML(qz){
+  var data=JSON.stringify(cleanExam(qz)).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
+  var tag='<scr'+'ipt>window.__AZIR_EXAM__='+data+';</scr'+'ipt>\n';
+  var i=SRC.indexOf('</he'+'ad>');
+  if(i<0) throw new Error('no head');
+  return SRC.slice(0,i)+tag+SRC.slice(i);
+}
+function downloadStudentFile(qz){
+  try{
+    saveFile(slug(qz.title)+'.html',buildStudentHTML(qz),'text/html');
+    toast(t('fileReady'));
+  }catch(e){ toast(t('badFile')); }
+}
+function saveFile(name,text,mime){
+  function fallback(){
+    var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:mime}));
+    a.download=name; document.body.appendChild(a); a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},600);
+  }
+  try{
+    if(window.claude&&window.claude.use){
+      window.claude.use('downloads').then(function(d){
+        if(!d){fallback();return}
+        d.save({filename:name,data:text}).catch(function(){});
+      },fallback);
+      return;
+    }
+  }catch(e){}
+  fallback();
+}
+function b64u(u8){
+  var s=''; for(var i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function unb64u(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='=';
+  var bin=atob(s), u=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return u;
+}
+async function encodeShare(qz){
+  var slim={v:1,t:qz.title,m:qz.minutes||0,q:qz.qs.map(function(x){return [x.t,x.o,x.a,x.s]})};
+  var bytes=new TextEncoder().encode(JSON.stringify(slim));
+  if(window.CompressionStream){
+    var cs=new CompressionStream('gzip'), w=cs.writable.getWriter(); w.write(bytes); w.close();
+    var buf=await new Response(cs.readable).arrayBuffer();
+    return 'g.'+b64u(new Uint8Array(buf));
+  }
+  return 'p.'+b64u(bytes);
+}
+async function decodeShare(code){
+  var kind=code.charAt(0), data=unb64u(code.slice(2)), bytes=data;
+  if(kind==='g'){
+    var ds=new DecompressionStream('gzip'), w=ds.writable.getWriter(); w.write(data); w.close();
+    bytes=new Uint8Array(await new Response(ds.readable).arrayBuffer());
+  }
+  var o=JSON.parse(new TextDecoder().decode(bytes));
+  return normalize({title:o.t,minutes:o.m,qs:o.q.map(function(a){return {t:a[0],o:a[1],a:a[2],s:a[3]}})});
+}
+function canLink(){return /^https?:$/.test(location.protocol)}
+async function makeLink(qz){
+  var code=await encodeShare(cleanExam(qz));
+  return location.href.split('#')[0]+'#e='+code;
+}
+
+/* =============================================================
+   library (this browser only)
+============================================================= */
+function libLoad(){
+  try{ var r=lsGet('azir_exams_v1'); var a=r?JSON.parse(r):[]; return (Array.isArray(a)?a:[]).map(normalize).filter(Boolean); }catch(e){return []}
+}
+function libSave(a){return lsSet('azir_exams_v1',JSON.stringify(a))}
+function libUpsert(qz){
+  var a=libLoad(), i=a.findIndex(function(x){return x.id===qz.id});
+  var copy=JSON.parse(JSON.stringify(qz));
+  if(i>=0) a[i]=copy; else a.unshift(copy);
+  return libSave(a);
+}
+
+/* =============================================================
+   state and screens
+============================================================= */
+var SCREEN='home', STUDENT=false, Qz=null, MK={step:1,open:{}}, S=null, filter='all', pendingImg=-1;
+
+function show(name){
+  SCREEN=name;
+  $$('.screen').forEach(function(el){el.hidden=(el.id!==name)});
+  window.scrollTo(0,0);
+}
+function rerender(){
+  if(SCREEN==='home') renderHome();
+  else if(SCREEN==='make') renderMake();
+  else if(SCREEN==='intro') renderIntro();
+  else if(SCREEN==='take') renderTake();
+  else if(SCREEN==='result') renderResult();
+}
+function applyLang(){
+  var ar=LANG==='ar';
+  document.documentElement.lang=ar?'ar':'en';
+  document.documentElement.dir=ar?'rtl':'ltr';
+  $$('[data-i]').forEach(function(el){el.textContent=t(el.getAttribute('data-i'))});
+  $$('[data-ph]').forEach(function(el){el.setAttribute('placeholder',t(el.getAttribute('data-ph')))});
+  $('#langBtn').textContent=ar?'English':'عربي';
+  document.title='AZIR · '+t('appName');
+  try{localStorage.setItem('azir_lang',LANG)}catch(e){}
+  rerender();
+}
+
+/* ---------- modal ---------- */
+function openModal(title,msg,btns,extraHTML){
+  $('#mTitle').textContent=title; $('#mMsg').textContent=msg||''; $('#mMsg').hidden=!msg;
+  $('#mExtra').innerHTML=extraHTML||'';
+  var box=$('#mBtns'); box.innerHTML='';
+  btns.forEach(function(b){
+    var el=document.createElement('button'); el.type='button'; el.className='btn '+(b.cls||''); el.textContent=b.t;
+    el.addEventListener('click',function(){ $('#modal').hidden=true; if(b.f) b.f(); });
+    box.appendChild(el);
+  });
+  $('#modal').hidden=false;
+  var f=box.querySelector('button'); if(f) f.focus();
+}
+function copyText(txt,done){
+  function fb(){
+    var ta=document.createElement('textarea'); ta.value=txt; ta.style.cssText='position:fixed;opacity:0;left:0;top:0';
+    document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); done()}catch(e){} ta.remove();
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done,fb); else fb();
+}
+
+/* =============================================================
+   HOME
+============================================================= */
+function renderHome(){
+  var a=libLoad(), box=$('#libList');
+  if(!a.length){ box.innerHTML='<p class="note">'+esc(t('emptyLib'))+'</p>'; return; }
+  box.innerHTML=a.map(function(q){
+    var meta=t('nQ',{n:q.qs.length})+' · '+(q.minutes?t('min',{n:q.minutes}):t('noLimit'));
+    return '<div class="li"><div class="li-main"><b dir="auto">'+esc(q.title||t('untitled'))+'</b><small>'+esc(meta)+'</small></div>'+
+      '<div class="li-acts">'+
+      '<button class="btn small pri" data-a="start" data-id="'+q.id+'" type="button">'+esc(t('start'))+'</button>'+
+      '<button class="btn small" data-a="edit" data-id="'+q.id+'" type="button">'+esc(t('edit'))+'</button>'+
+      '<button class="btn small" data-a="dl" data-id="'+q.id+'" type="button">'+esc(t('dlFile'))+'</button>'+
+      '<button class="btn small danger" data-a="del" data-id="'+q.id+'" type="button">'+esc(t('del'))+'</button>'+
+      '</div></div>';
+  }).join('');
+}
+$('#libList').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-a]'); if(!b) return;
+  var id=b.getAttribute('data-id'), act=b.getAttribute('data-a');
+  var q=libLoad().find(function(x){return x.id===id}); if(!q) return;
+  if(act==='start'){ Qz=q; openIntro(); }
+  else if(act==='edit'){ Qz=q; MK.open={}; goMake(3); }
+  else if(act==='dl'){ downloadStudentFile(q); }
+  else if(act==='del'){
+    openModal(t('del'),t('confirmDel',{t:q.title||t('untitled')}),[
+      {t:t('cancel')},
+      {t:t('del'),cls:'danger',f:function(){ libSave(libLoad().filter(function(x){return x.id!==id})); renderHome(); }}
+    ]);
+  }
+});
+$('#btnCreate').addEventListener('click',function(){
+  Qz=null; MK.open={}; $('#pasteBox').value=''; $('#mkMsg').innerHTML=''; goMake(1);
+});
+$('#brandBtn').addEventListener('click',function(){ if(!STUDENT){ if(SCREEN==='take'&&S&&!S.done) return; show('home'); renderHome(); } });
+
+/* open file from home (or import on the paste step) */
+var fileMode='open';
+$('#fileIn').addEventListener('change',function(e){
+  var f=e.target.files&&e.target.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    var res=parseAny(String(rd.result||''));
+    if(!res.data||!res.data.qs.length){ toast(t('badFile')); return; }
+    var d=res.data;
+    if(fileMode==='open'&&res.json){ Qz=d; openIntro(); return; }
+    Qz=normalize({title:d.title||t('untitled'),minutes:d.minutes,qs:d.qs});
+    MK.open=openProblems(Qz); goMake(3);
+  };
+  rd.onerror=function(){toast(t('badFile'))};
+  rd.readAsText(f);
+});
+
+/* =============================================================
+   MAKE
+============================================================= */
+function openProblems(qz){var o={};qz.qs.forEach(function(q,i){if(problem(q)) o[i]=1});return o}
+function goMake(step){ MK.step=step; show('make'); renderMake(); }
+function renderMake(){
+  $('#promptBox').value=PROMPT;
+  [1,2,3].forEach(function(n){
+    $('#p'+n).hidden=(MK.step!==n);
+    var b=$('#stepper [data-s="'+n+'"]');
+    b.textContent=t('step'+n);
+    if(MK.step===n) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
+    b.classList.toggle('done',n<MK.step);
+  });
+  if(MK.step===3&&Qz) renderEditor();
+}
+$('#stepper').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-s]'); if(!b) return;
+  var n=+b.getAttribute('data-s');
+  if(n===3&&!Qz) return;
+  goMake(n);
+});
+$('#copyPrompt').addEventListener('click',function(){
+  var b=this; copyText(PROMPT,function(){ b.textContent=t('copied'); setTimeout(function(){b.textContent=t('copyInstr')},1600); });
+});
+$('#to2').addEventListener('click',function(){goMake(2)});
+$('#back1').addEventListener('click',function(){goMake(1)});
+$('#sampleBtn').addEventListener('click',function(){ $('#pasteBox').value=SAMPLE; });
+$('#importBtn').addEventListener('click',function(){ fileMode='import'; $('#fileIn').value=''; $('#fileIn').click(); });
+
+$('#buildBtn').addEventListener('click',function(){
+  var raw=$('#pasteBox').value, msg=$('#mkMsg');
+  if(!raw.trim()){ msg.innerHTML='<p class="warn">'+esc(t('nothingFound'))+'</p>'; return; }
+  var res=parseAny(raw), d=res.data;
+  if(!d||!d.qs.length){ msg.innerHTML='<p class="bad">'+esc(t('nothingFound'))+'</p>'; return; }
+  Qz=normalize({title:d.title||t('untitled'),minutes:d.minutes,qs:d.qs});
+  MK.open=openProblems(Qz);
+  goMake(3);
+  var probs=[]; Qz.qs.forEach(function(q,i){var p=problem(q); if(p) probs.push(t('warnQ',{i:i+1,p:t(p)}))});
+  toast(t('found',{n:Qz.qs.length}));
+});
+
+/* ---------- editor ---------- */
+function qStatus(q){return problem(q)?'bad':'ok'}
+function summaryText(q){var s=q.t.replace(/\s+/g,' ').trim(); return s.length>90?s.slice(0,90)+'…':(s||'—')}
+function plainPrev(q){return fmt(q.t)}
+function renderEditor(){
+  $('#edTitle').value=Qz.title; $('#edMin').value=Qz.minutes;
+  var html='';
+  Qz.qs.forEach(function(q,i){
+    var st=qStatus(q);
+    var opts=q.o.map(function(x,j){
+      return '<div class="oe"><input type="radio" name="ans'+i+'" data-f="a" value="'+j+'"'+(q.a===j?' checked':'')+' aria-label="'+esc(t('rightAns'))+'">'+
+        '<input class="inp" data-f="o" data-j="'+j+'" dir="auto" value="'+esc(x)+'">'+
+        '<button type="button" class="x" data-act="rmopt" data-j="'+j+'" aria-label="×">×</button></div>';
+    }).join('');
+    html+='<details class="qe" data-i="'+i+'"'+(MK.open[i]?' open':'')+'>'+
+      '<summary><span class="qe-n">'+(i+1)+'</span><span class="qe-t" dir="auto">'+esc(summaryText(q))+'</span><span class="qe-st '+st+'">'+(st==='ok'?'✓':'!')+'</span></summary>'+
+      '<div class="qe-body">'+
+      '<label class="lb">'+esc(t('qLabel'))+'</label><textarea class="inp" data-f="t" rows="3" dir="auto">'+esc(q.t)+'</textarea>'+
+      (q.img?'<img class="thumb" src="'+q.img+'" alt="">':'')+
+      '<div class="qe-acts"><button type="button" class="btn small" data-act="addimg">'+esc(t('addImg'))+'</button>'+
+      (q.img?'<button type="button" class="btn small" data-act="rmimg">'+esc(t('rmImg'))+'</button>':'')+'</div>'+
+      '<label class="lb">'+esc(t('choices'))+'</label>'+opts+
+      (q.o.length<6?'<button type="button" class="btn small" data-act="addopt">+ '+esc(t('addChoice'))+'</button>':'')+
+      '<label class="lb">'+esc(t('solutionLbl'))+'</label><textarea class="inp" data-f="s" rows="4" dir="auto">'+esc(q.s)+'</textarea>'+
+      '<label class="lb">'+esc(t('preview'))+'</label><div class="prev" dir="auto">'+plainPrev(q)+'</div>'+
+      '<div class="qe-acts"><button type="button" class="btn small" data-act="up">↑ '+esc(t('up'))+'</button>'+
+      '<button type="button" class="btn small" data-act="down">↓ '+esc(t('down'))+'</button>'+
+      '<button type="button" class="btn small danger" data-act="del">'+esc(t('delQ'))+'</button></div>'+
+      '</div></details>';
+  });
+  $('#editor').innerHTML=html;
+  updateSummary();
+}
+function updateSummary(){
+  var bad=Qz.qs.filter(function(q){return problem(q)}).length;
+  var el=$('#edSummary');
+  el.textContent=t('nQ',{n:Qz.qs.length})+' · '+(bad?t('needsFix',{n:bad}):t('allGood'));
+}
+function refreshQE(i){
+  var d=$('#editor .qe[data-i="'+i+'"]'); if(!d) return; var q=Qz.qs[i], st=qStatus(q);
+  $('.qe-t',d).textContent=summaryText(q);
+  var s=$('.qe-st',d); s.className='qe-st '+st; s.textContent=st==='ok'?'✓':'!';
+  $('.prev',d).innerHTML=plainPrev(q);
+  updateSummary();
+}
+$('#editor').addEventListener('toggle',function(e){
+  var d=e.target; if(!d.classList||!d.classList.contains('qe')) return;
+  var i=d.getAttribute('data-i'); if(d.open) MK.open[i]=1; else delete MK.open[i];
+},true);
+$('#editor').addEventListener('input',function(e){
+  var el=e.target, d=el.closest('.qe'); if(!d) return;
+  var i=+d.getAttribute('data-i'), q=Qz.qs[i], f=el.getAttribute('data-f');
+  if(f==='t') q.t=el.value; else if(f==='s') q.s=el.value;
+  else if(f==='o') q.o[+el.getAttribute('data-j')]=el.value;
+  refreshQE(i);
+});
+$('#editor').addEventListener('change',function(e){
+  var el=e.target; if(el.getAttribute('data-f')!=='a') return;
+  var d=el.closest('.qe'), i=+d.getAttribute('data-i'); Qz.qs[i].a=+el.value; refreshQE(i);
+});
+$('#editor').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-act]'); if(!b) return;
+  var d=b.closest('.qe'), i=+d.getAttribute('data-i'), q=Qz.qs[i], act=b.getAttribute('data-act');
+  MK.open[i]=1;
+  if(act==='addopt'){ if(q.o.length<6){ q.o.push(''); renderEditor(); } }
+  else if(act==='rmopt'){
+    var j=+b.getAttribute('data-j'); q.o.splice(j,1);
+    if(q.a===j) q.a=-1; else if(q.a>j) q.a--;
+    renderEditor();
+  }
+  else if(act==='up'&&i>0){ var tmp=Qz.qs[i-1]; Qz.qs[i-1]=q; Qz.qs[i]=tmp; MK.open={}; MK.open[i-1]=1; renderEditor(); }
+  else if(act==='down'&&i<Qz.qs.length-1){ var tmp2=Qz.qs[i+1]; Qz.qs[i+1]=q; Qz.qs[i]=tmp2; MK.open={}; MK.open[i+1]=1; renderEditor(); }
+  else if(act==='del'){
+    openModal(t('delQ'),'#'+(i+1),[{t:t('cancel')},{t:t('del'),cls:'danger',f:function(){ Qz.qs.splice(i,1); MK.open={}; renderEditor(); }}]);
+  }
+  else if(act==='addimg'){ pendingImg=i; $('#imgIn').value=''; $('#imgIn').click(); }
+  else if(act==='rmimg'){ q.img=''; renderEditor(); }
+});
+$('#imgIn').addEventListener('change',function(e){
+  var f=e.target.files&&e.target.files[0]; if(!f||pendingImg<0) return;
+  var idx=pendingImg, rd=new FileReader();
+  rd.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var max=900, k=Math.min(1,max/Math.max(im.width,im.height));
+      var c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+      var g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,c.width,c.height); g.drawImage(im,0,0,c.width,c.height);
+      Qz.qs[idx].img=c.toDataURL('image/jpeg',.85); MK.open[idx]=1; renderEditor();
+    };
+    im.src=String(rd.result);
+  };
+  rd.readAsDataURL(f);
+});
+$('#edTitle').addEventListener('input',function(){Qz.title=this.value});
+$('#edMin').addEventListener('input',function(){Qz.minutes=Math.max(0,Math.min(600,parseInt(this.value,10)||0))});
+$('#edAdd').addEventListener('click',function(){
+  Qz.qs.push({t:'',o:['','','',''],a:-1,s:'',img:''}); MK.open[Qz.qs.length-1]=1; renderEditor();
+  var d=$('#editor .qe:last-child'); if(d) d.scrollIntoView({block:'center'});
+});
+function allValid(){
+  var bad=-1; Qz.qs.forEach(function(q,i){ if(bad<0&&problem(q)) bad=i; });
+  if(bad>=0){
+    MK.open[bad]=1; renderEditor(); toast(t('fixFirst'));
+    var d=$('#editor .qe[data-i="'+bad+'"]'); if(d) d.scrollIntoView({block:'center'});
+    return false;
+  }
+  return true;
+}
+$('#edSave').addEventListener('click',function(){
+  if(!Qz.qs.length) return;
+  Qz.title=Qz.title.trim()||t('untitled');
+  if(libUpsert(Qz)) toast(t('saved')); else toast(t('storeFull'));
+});
+$('#edDl').addEventListener('click',function(){
+  if(!allValid()) return;
+  Qz.title=Qz.title.trim()||t('untitled');
+  downloadStudentFile(Qz);
+});
+$('#edStart').addEventListener('click',function(){ if(allValid()) openIntro(); });
+
+async function showLink(qz){
+  if(!canLink()){ openModal(t('linkTitle'),t('linkNA'),[{t:t('close')}]); return; }
+  var url;
+  try{ url=await makeLink(qz); }catch(e){ toast(t('badFile')); return; }
+  var warn=url.length>8000?'<p class="note" style="margin-bottom:12px">'+esc(t('linkLong'))+'</p>':'';
+  var hasImg=qz.qs.some(function(q){return q.img});
+  openModal(t('linkTitle'),t('linkNote'),[
+    {t:t('copyBtn'),cls:'pri',f:function(){copyText(url,function(){toast(t('copied'))})}},
+    {t:t('close')}
+  ],warn+'<input class="inp" readonly dir="ltr" id="linkField" value="'+esc(url)+'" style="margin-bottom:14px">');
+  var lf=$('#linkField'); if(lf){ lf.addEventListener('focus',function(){lf.select()}); }
+  if(hasImg) toast(t('linkNote'));
+}
+
+/* =============================================================
+   INTRO
+============================================================= */
+function openIntro(){ show('intro'); renderIntro(); }
+function renderIntro(){
+  if(!Qz) return;
+  var c=cleanExam(Qz);
+  $('#inTitle').textContent=c.title||t('untitled');
+  $('#inChips').innerHTML='<span class="chip">'+esc(t('nQ',{n:c.qs.length}))+'</span><span class="chip">'+esc(c.minutes?t('min',{n:c.minutes}):t('noLimit'))+'</span>';
+}
+$('#inBack').addEventListener('click',function(){show('home');renderHome()});
+$('#inStart').addEventListener('click',function(){
+  var c=cleanExam(Qz), ids=c.qs.map(function(_,i){return i});
+  startAttempt(c,ids,$('#inSq').checked,$('#inSo').checked,false,($('#inName').value||'').trim());
+});
+
+/* =============================================================
+   TAKE
+============================================================= */
+function startAttempt(qz,ids,sq,so,noTimer,name){
+  var list=sq?shuf(ids):ids.slice(), oo={};
+  list.forEach(function(i){
+    var idx=qz.qs[i].o.map(function(_,k){return k}); oo[i]=so?shuf(idx):idx;
+  });
+  var limit=noTimer?0:(qz.minutes||0)*60;
+  S={qz:qz,ids:list,oo:oo,ans:{},flags:{},cur:0,el:0,limit:limit,left:limit,done:false,name:name||'',sq:sq,so:so};
+  show('take'); renderTake();
+}
+function renderTake(){
+  if(!S) return;
+  var id=S.ids[S.cur], q=S.qz.qs[id], n=S.ids.length;
+  $('#qnum').textContent=S.cur+1; $('#qtot').textContent=n;
+  $('#qtitle').textContent=S.qz.title||'';
+  $('#qno').textContent=t('qOf',{n:S.cur+1});
+  $('#qtext').innerHTML=fmt(q.t);
+  $('#qimgBox').innerHTML=(q.img&&IMG_RE.test(q.img))?'<img class="qimg" src="'+q.img+'" alt="">':'';
+  renderOpts();
+  var fl=!!S.flags[id], fb=$('#flagBtn');
+  fb.setAttribute('aria-pressed',fl); fb.textContent=fl?t('flagged'):t('flag');
+  $('#prevBtn').disabled=(S.cur===0);
+  $('#nextBtn').textContent=(S.cur===n-1)?t('submit'):t('nextQ');
+  $('#legend').innerHTML='<span><i style="background:var(--sel-soft);border:2px solid var(--sel)"></i>'+esc(t('lAns'))+'</span><span><i style="background:var(--gold)"></i>'+esc(t('lFlag'))+'</span><span><i style="background:var(--card2);border:2px solid var(--line)"></i>'+esc(t('lNo'))+'</span>';
+  updateProgress(); renderNav(); updateTimer();
+}
+function renderOpts(){
+  var id=S.ids[S.cur], q=S.qz.qs[id], cur=S.ans[id];
+  $('#opts').innerHTML=S.oo[id].map(function(orig,pos){
+    return '<button type="button" class="opt" role="radio" aria-checked="'+(cur===orig)+'" data-o="'+orig+'"><span class="let">'+esc(L(pos))+'</span><span class="tx" dir="auto">'+fmt(q.o[orig])+'</span></button>';
+  }).join('');
+}
+function updateProgress(){
+  var d=S.ids.filter(function(i){return S.ans[i]!==undefined}).length;
+  $('#trackFill').style.width=(d/S.ids.length*100)+'%';
+}
+function renderNav(){
+  $('#ngrid').innerHTML=S.ids.map(function(id,pos){
+    var cls='n'+(S.ans[id]!==undefined?' done':'')+(S.flags[id]?' flag':'')+(pos===S.cur?' cur':'');
+    return '<button type="button" class="'+cls+'" data-p="'+pos+'" aria-label="'+(pos+1)+'">'+(pos+1)+'</button>';
+  }).join('');
+}
+function updateTimer(){
+  var el=$('#timer'); el.textContent=mmss(S.limit>0?S.left:S.el);
+  el.classList.toggle('low',S.limit>0&&S.left<=60);
+}
+function go(p){
+  if(p<0||p>=S.ids.length) return;
+  S.cur=p; renderTake(); closeNav(); window.scrollTo(0,0);
+}
+function openNav(){$('#navPanel').classList.add('open');$('#navBack').classList.add('show')}
+function closeNav(){$('#navPanel').classList.remove('open');$('#navBack').classList.remove('show')}
+
+$('#opts').addEventListener('click',function(e){
+  var b=e.target.closest('.opt'); if(!b||!S||S.done) return;
+  var id=S.ids[S.cur], o=+b.getAttribute('data-o');
+  if(S.ans[id]===o) delete S.ans[id]; else S.ans[id]=o;
+  renderOpts(); updateProgress(); renderNav();
+});
+$('#flagBtn').addEventListener('click',function(){
+  var id=S.ids[S.cur]; if(S.flags[id]) delete S.flags[id]; else S.flags[id]=1; renderTake();
+});
+$('#prevBtn').addEventListener('click',function(){go(S.cur-1)});
+$('#nextBtn').addEventListener('click',function(){ if(S.cur===S.ids.length-1) trySubmit(); else go(S.cur+1); });
+$('#submitTop').addEventListener('click',trySubmit);
+$('#submitSide').addEventListener('click',function(){closeNav();trySubmit()});
+$('#navBtn').addEventListener('click',openNav);
+$('#navClose').addEventListener('click',closeNav);
+$('#navBack').addEventListener('click',closeNav);
+$('#ngrid').addEventListener('click',function(e){var b=e.target.closest('.n');if(b)go(+b.getAttribute('data-p'))});
+
+function trySubmit(){
+  var un=S.ids.filter(function(i){return S.ans[i]===undefined});
+  if(!un.length){ finish(false); return; }
+  var firstPos=S.ids.indexOf(un[0]);
+  openModal(t('mNotDone'),t('mNotDoneMsg',{n:un.length}),[
+    {t:t('keep'),cls:'pri',f:function(){go(firstPos)}},
+    {t:t('submitNow'),f:function(){finish(false)}}
+  ]);
+}
+function status(id){var a=S.ans[id];return a===undefined?'skip':(a===S.qz.qs[id].a?'ok':'bad')}
+function finish(auto){
+  if(S.done) return;
+  S.done=true; closeNav(); filter='all';
+  show('result'); renderResult();
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    var fg=$('#ringFg'); if(fg) fg.style.strokeDashoffset=fg.getAttribute('data-to');
+  })});
+  if(auto) openModal(t('timeUp'),t('timeUpMsg'),[{t:t('ok'),cls:'pri'}]);
+}
+setInterval(function(){
+  if(!S||S.done||SCREEN!=='take') return;
+  S.el++;
+  if(S.limit>0){ S.left--; if(S.left<=0){ S.left=0; updateTimer(); finish(true); return; } }
+  updateTimer();
+},1000);
+
+document.addEventListener('keydown',function(e){
+  if(SCREEN!=='take'||!S||S.done||!$('#modal').hidden) return;
+  var tag=(e.target.tagName||'').toLowerCase(); if(tag==='input'||tag==='textarea') return;
+  var rtl=document.documentElement.dir==='rtl';
+  if(e.key==='ArrowLeft') go(S.cur+(rtl?1:-1));
+  else if(e.key==='ArrowRight') go(S.cur+(rtl?-1:1));
+  else if(/^[1-6]$/.test(e.key)){
+    var id=S.ids[S.cur], ord=S.oo[id], k=+e.key-1;
+    if(ord[k]!==undefined){ S.ans[id]=ord[k]; renderOpts(); updateProgress(); renderNav(); }
+  } else if(e.key==='Escape') closeNav();
+});
+
+/* =============================================================
+   RESULT
+============================================================= */
+function renderResult(){
+  if(!S) return;
+  var n=S.ids.length, ok=0, bad=0, skip=0;
+  S.ids.forEach(function(id){var s=status(id); if(s==='ok')ok++; else if(s==='bad')bad++; else skip++;});
+  var pct=Math.round(ok/n*100), C=2*Math.PI*54;
+  $('#ring').innerHTML='<svg viewBox="0 0 130 130" aria-hidden="true"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd4c0"/><stop offset=".5" stop-color="#5aa2ff"/><stop offset="1" stop-color="#e0bd6a"/></linearGradient></defs>'+
+    '<circle class="bg" cx="65" cy="65" r="54" fill="none" stroke-width="13"/>'+
+    '<circle class="fg" id="ringFg" cx="65" cy="65" r="54" fill="none" stroke="url(#rg)" stroke-width="13" stroke-dasharray="'+C.toFixed(2)+'" stroke-dashoffset="'+C.toFixed(2)+'" data-to="'+(C*(1-pct/100)).toFixed(2)+'"/></svg>'+
+    '<div class="mid"><b>'+ok+'/'+n+'</b><span>'+pct+'%</span></div>';
+  var tier=pct>=90?'90':pct>=75?'75':pct>=50?'50':'0';
+  $('#verdict').textContent=t('v'+tier); $('#subv').textContent=t('s'+tier);
+  var who=(S.qz.title||'')+(S.name?' · '+t('student')+': '+S.name:'')+' · '+new Date().toLocaleDateString(LANG==='ar'?'ar':'en-GB');
+  $('#resWho').textContent=who;
+  var used=S.limit>0?(S.limit-S.left):S.el;
+  $('#stats').innerHTML=
+    '<div class="stat ok"><b>'+ok+'</b><small>'+esc(t('correct'))+'</small></div>'+
+    '<div class="stat bad"><b>'+bad+'</b><small>'+esc(t('wrong'))+'</small></div>'+
+    '<div class="stat skip"><b>'+skip+'</b><small>'+esc(t('skipped'))+'</small></div>'+
+    '<div class="stat"><b style="direction:ltr">'+mmss(used)+'</b><small>'+esc(t('time'))+'</small></div>';
+  var missed=S.ids.filter(function(i){return status(i)!=='ok'});
+  var rb=$('#retryWrong'); rb.disabled=!missed.length;
+  rb.textContent=missed.length?t('retry',{n:missed.length}):t('noMiss');
+  $('#filters').innerHTML=[['all',t('fAll')+' ('+n+')'],['bad',t('fWrong')+' ('+bad+')'],['skip',t('fSkip')+' ('+skip+')'],['ok',t('fOk')+' ('+ok+')']].map(function(f){
+    return '<button type="button" data-f="'+f[0]+'" aria-pressed="'+(f[0]===filter)+'">'+esc(f[1])+'</button>';
+  }).join('');
+  renderReview();
+}
+function renderReview(){
+  var html='';
+  S.ids.forEach(function(id,pos){
+    var st=status(id); if(filter!=='all'&&filter!==st) return;
+    var q=S.qz.qs[id], ua=S.ans[id];
+    var chip={ok:t('cOk'),bad:t('cBad'),skip:t('cSkip')}[st];
+    var opts=S.oo[id].map(function(orig,p){
+      var cls='',tag='';
+      if(orig===q.a){cls='ok';tag='<span class="tag">'+esc(t('rightAns'))+'</span>'}
+      else if(orig===ua){cls='no';tag='<span class="tag">'+esc(t('yourAns'))+'</span>'}
+      return '<li class="'+cls+'"><span class="let">'+esc(L(p))+'</span><span class="tx" dir="auto">'+fmt(q.o[orig])+'</span>'+tag+'</li>';
+    }).join('');
+    var steps=q.s?q.s.split(/\n|\s\|\s/).filter(function(x){return x.trim()}).map(function(x){return '<p dir="auto"><span>'+fmt(x.trim())+'</span></p>'}).join(''):'';
+    html+='<article class="rv '+st+'"><div class="rv-h"><span class="cl '+st+'">'+esc(chip)+'</span><b>'+esc(t('qOf',{n:pos+1}))+'</b></div>'+
+      '<div class="rv-q" dir="auto">'+fmt(q.t)+'</div>'+
+      ((q.img&&IMG_RE.test(q.img))?'<img class="qimg" src="'+q.img+'" alt="">':'')+
+      '<ul class="rv-opts">'+opts+'</ul>'+
+      (steps?'<details class="sol"'+(st==='ok'?'':' open')+'><summary>'+esc(t('solution'))+'</summary><div class="steps">'+steps+'</div></details>':'')+
+      '</article>';
+  });
+  $('#review').innerHTML=html||'<div class="empty">'+esc(t('emptyFilter'))+'</div>';
+}
+$('#filters').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b) return;
+  filter=b.getAttribute('data-f');
+  $$('#filters button').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-f')===filter)});
+  renderReview();
+});
+$('#retryWrong').addEventListener('click',function(){
+  var ids=S.ids.filter(function(i){return status(i)!=='ok'}); if(!ids.length) return;
+  startAttempt(S.qz,ids,true,true,true,S.name);
+});
+$('#again').addEventListener('click',function(){ if(S&&S.qz){ Qz=Qz||S.qz; } openIntro(); });
+$('#resHome').addEventListener('click',function(){show('home');renderHome()});
+
+/* =============================================================
+   theme, language, backdrop art, banner, start-up
+============================================================= */
+$('#themeBtn').addEventListener('click',function(){
+  var cur=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',cur); lsSet('azir_theme',cur);
+});
+$('#langBtn').addEventListener('click',function(){LANG=(LANG==='en')?'ar':'en';applyLang()});
+
+function buildSplat(){
+  var s=11; function r(){s=(s*16807)%2147483647;return s/2147483647}
+  var cols=['#0f7a8a','#12a594','#1f5a8a','#0b3a52','#d4b05a','#2fd4c0'], blobs='', dots='';
+  function cluster(cx,cy,R,n,m){
+    var i,a,d;
+    for(i=0;i<n;i++){ a=r()*6.283; d=r()*R*.5;
+      blobs+='<circle cx="'+(cx+Math.cos(a)*d).toFixed(1)+'" cy="'+(cy+Math.sin(a)*d).toFixed(1)+'" r="'+(R*(.18+r()*.28)).toFixed(1)+'" fill="'+cols[Math.floor(r()*3)]+'"/>'; }
+    for(i=0;i<m;i++){ a=r()*6.283; d=R*(.55+r()*1.5);
+      var rr=Math.max(.9,(1.2+r()*r()*10)*(1.35-d/(R*2.2)));
+      dots+='<circle cx="'+(cx+Math.cos(a)*d).toFixed(1)+'" cy="'+(cy+Math.sin(a)*d).toFixed(1)+'" r="'+rr.toFixed(1)+'" fill="'+cols[Math.floor(r()*6)]+'"/>'; }
+  }
+  cluster(945,90,120,9,50); cluster(45,640,105,8,44); cluster(520,700,55,4,18);
+  return '<svg viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice"><defs><filter id="goo"><feGaussianBlur stdDeviation="7"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/></filter></defs><g filter="url(#goo)">'+blobs+'</g>'+dots+'</svg>';
+}
+function buildBanner(){
+  return '<svg class="banner" viewBox="0 0 300 660">'+
+  '<defs>'+
+   '<linearGradient id="bv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b3a4a"/><stop offset=".55" stop-color="#14586a"/><stop offset="1" stop-color="#3a8da1"/></linearGradient>'+
+   '<linearGradient id="bs" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f8fa"/><stop offset=".5" stop-color="#9db0b9"/><stop offset="1" stop-color="#e9f0f3"/></linearGradient>'+
+   '<linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34e0c8"/><stop offset=".45" stop-color="#2b73c9"/><stop offset=".75" stop-color="#6b4fd0"/><stop offset="1" stop-color="#e0bd6a"/></linearGradient>'+
+   '<linearGradient id="bg2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0bd6a"/><stop offset=".4" stop-color="#6b4fd0"/><stop offset=".75" stop-color="#2b73c9"/><stop offset="1" stop-color="#34e0c8"/></linearGradient>'+
+   '<filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" seed="5" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .75  0 0 0 0 .95  0 0 0 0 1  0 0 0 .9 -.38" result="c"/><feComposite in="c" in2="SourceAlpha" operator="in"/></filter>'+
+   '<g id="wing"><path d="M124 262C86 252 58 222 56 176C84 190 108 206 124 236Z" fill="url(#bg1)" stroke="url(#bs)" stroke-width="3" stroke-linejoin="round"/>'+
+    '<path d="M122 292C90 294 62 278 46 248C76 252 100 260 118 272Z" fill="url(#bg2)" stroke="url(#bs)" stroke-width="3" stroke-linejoin="round"/>'+
+    '<path d="M126 326C100 336 76 332 58 316C82 312 104 310 122 308Z" fill="url(#bg1)" stroke="url(#bs)" stroke-width="3" stroke-linejoin="round"/></g>'+
+   '<g id="rays" fill="none" stroke="url(#bs)" stroke-width="1.8" stroke-linecap="round"><path d="M114 518C84 498 70 468 64 440"/><path d="M118 534C90 540 72 520 60 498"/><path d="M122 548C108 574 88 584 66 562"/><path d="M134 556C124 590 140 610 150 622"/></g>'+
+  '</defs>'+
+  '<g stroke="url(#bs)" fill="none" stroke-linecap="round">'+
+   '<line x1="22" y1="26" x2="278" y2="26" stroke-width="5"/>'+
+   '<path d="M2 26L26 19V33Z" fill="url(#bs)" stroke="none"/><path d="M298 26L274 19V33Z" fill="url(#bs)" stroke="none"/>'+
+   '<path d="M40 26c-6-18 14-24 16-10c2 12-14 12-12 2" stroke-width="2.5"/><path d="M260 26c6-18-14-24-16-10c-2 12 14 12 12 2" stroke-width="2.5"/></g>'+
+  '<path d="M34 36H266V510L150 636L34 510Z" fill="url(#bv)"/>'+
+  '<path d="M34 36H266V510L150 636L34 510Z" filter="url(#grain)" opacity=".55"/>'+
+  '<g fill="none" stroke="url(#bs)" stroke-linejoin="round"><path d="M34 36H266V510L150 636L34 510Z" stroke-width="3.5"/><path d="M46 48H254V504L150 616L46 504Z" stroke-width="2.5"/><path d="M56 58H244V498L150 600L56 498Z" stroke-width="1.8"/></g>'+
+  '<text x="150" y="116" text-anchor="middle" font-family="Cairo,sans-serif" font-weight="800" font-size="52" letter-spacing="4" fill="url(#bg1)" stroke="url(#bs)" stroke-width="2" paint-order="stroke">AZIR</text>'+
+  '<use href="#wing"/><use href="#wing" transform="translate(300 0) scale(-1 1)"/>'+
+  '<polygon points="150,150 178,262 150,428 122,262" fill="url(#bg1)" stroke="url(#bs)" stroke-width="3" stroke-linejoin="round"/>'+
+  '<polygon points="150,150 178,262 150,428" fill="url(#bg2)" opacity=".75"/>'+
+  '<path d="M150 150V428" stroke="url(#bs)" stroke-width="2"/>'+
+  '<g fill="#e8c874" opacity=".95"><circle cx="138" cy="236" r="1.8"/><circle cx="162" cy="300" r="1.5"/><circle cx="144" cy="352" r="1.4"/><circle cx="96" cy="214" r="1.6"/><circle cx="206" cy="214" r="1.6"/><circle cx="84" cy="300" r="1.3"/><circle cx="218" cy="300" r="1.3"/></g>'+
+  '<g fill="none" stroke="url(#bs)" stroke-width="3"><circle cx="150" cy="520" r="36"/><circle cx="150" cy="520" r="29" stroke-width="1.5"/><polygon points="150,497 172,536 128,536" stroke-width="2.5"/><circle cx="140" cy="528" r="11" stroke-width="2"/><circle cx="160" cy="528" r="11" stroke-width="2"/></g>'+
+  '<use href="#rays"/><use href="#rays" transform="translate(300 0) scale(-1 1)"/>'+
+  '</svg>';
+}
+
+/* start-up */
+(function init(){
+  $('#splat').innerHTML=buildSplat();
+  $('#bannerWrap').innerHTML=buildBanner();
+  var th=lsGet('azir_theme'); if(th==='light'||th==='dark') document.documentElement.setAttribute('data-theme',th);
+  var lg=lsGet('azir_lang'); if(lg==='ar'||lg==='en') LANG=lg;
+  var h=location.hash||'';
+  if(window.__AZIR_EXAM__){
+    var emb=normalize(window.__AZIR_EXAM__);
+    if(emb&&emb.qs.length){
+      STUDENT=true; document.body.classList.add('student');
+      $$('.screen').forEach(function(el){el.hidden=true});
+      applyLang(); Qz=emb; openIntro(); return;
+    }
+  }
+  if(h.indexOf('#e=')===0){
+    STUDENT=true; document.body.classList.add('student');
+    $$('.screen').forEach(function(el){el.hidden=true});
+    applyLang();
+    decodeShare(h.slice(3)).then(function(q){
+      if(!q||!q.qs.length) throw 0;
+      Qz=q; openIntro();
+    }).catch(function(){ STUDENT=false; document.body.classList.remove('student'); show('home'); renderHome(); toast(t('badFile')); });
+    return;
+  }
+  applyLang();
+  show('home');
+})();
+})();
+</script>
+</body>
+</html>
